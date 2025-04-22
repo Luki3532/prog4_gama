@@ -15,10 +15,8 @@ class PriorityQueue {
     Job[] queue; // the queue variable is an array of Job objects defined by the client or user
     int size = 0; // the size variable is an integer that will keep track of the number of tasks
                   // in the queue.
-    int front = 0; // the front variable is an integer that will keep track of the front of the
-                   // queue.
-    int rear = 0; // the rear variable is an integer that will keep track of the rear of the
-                  // queue.
+    final int front = 0; // the front of the queue will always be the task with the highest priority.
+                         // the front of the queue is always at index 0 in the array.
 
     public PriorityQueue() {
         queue = new Job[CAPACITY]; // Initialize the queue array that will serve as a queue ADT with the fixed
@@ -36,8 +34,10 @@ class PriorityQueue {
     }
 
     public void clear() {
-        size = 0; // set the size of the queue to 0 to clear the queue (this forces the queue to
-                  // overwrite itself**?).
+        for (int i = 0; i < size; i++) {
+            queue[i] = null; // set each element in the queue to null to clear the queue.
+        }
+        size = 0; // set the size of the queue to 0 to indicate that the queue is empty.
     }
 
     /*
@@ -62,11 +62,14 @@ class PriorityQueue {
         size++;
     }
 
+    // be sure to check if the queue is empty before calling this method.
+    // This method removes the task with the highest priority from the queue (the
+    // first element in the array) this method relies on upheap and downheap method
+    // to return the correct task to the user. the task that this method returns is
+    // the task with the highest priority in the queue. or the lowest numerical
+    // value priority.
     public String dequeue() {
-        if (isEmpty()) {
-            System.out.println("Queue is empty. Cannot dequeue.");
-            return null;
-        }
+
         Job removedJob = queue[0];
         for (int i = 1; i < size; i++) {
             queue[i - 1] = queue[i];
@@ -225,6 +228,10 @@ public class PqTest {
         in.nextLine(); // Consume the newline character this is necessary to avoid skipping the next
                        // input.
         int p = in.nextInt();
+        if (p < 0) {
+            System.out.println("Priority must be a positive integer.\n\nReturning to menu.");
+            return;
+        }
         pq.enqueue(task, p);
     }
 
@@ -232,7 +239,7 @@ public class PqTest {
         if (!pq.isEmpty())
             System.out.println("Removed: " + pq.dequeue());
         else
-            System.out.println("Queue is empty.");
+            System.out.println("Cannot dequeue from an empty queue.\n\nReturning to menu.");
     }
 
     static void clearQueue() {
